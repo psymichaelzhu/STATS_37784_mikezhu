@@ -1,156 +1,285 @@
-\pdfoutput=1
-\documentclass{article}
+\documentclass[12pt]{article}
 
-
-% alptex + small aesthetic tweaks + some extra math defs
-\input{preamble/preamble.tex}
-\input{preamble/preamble_math}
-\input{preamble/definitions_basic}
-
-% bibtex import + some code to strip away useless bib info (volume number, isbn, and the ilk), and to standardize capitalization
-% warning: the arxiv uses an outdated bibtex, which causes cryptic and frustrating upload errors 
-% easiest solution: install whatever current arxiv texlive is from ftp://tug.org/historic/systems/texlive/ (download the ISO) and compile using this versions pdflatex and bibtex
-% alternatively, look upon https://github.com/plk/biblatex/wiki/biblatex-and-the-arXiv and despair. 
-\input{preamble/minimalist_biblatex}
-
-\addbibresource{bibs/sensitivity}
-
-\crefformat{equation}{(#2#1#3)}
-\crefformat{figure}{Figure~#2#1#3}
-\crefname{example}{Example}{Examples}
-\crefname{lemma}{Lemma}{Lemmas}
-\crefname{cor}{Corollary}{Corollaries}
-\crefname{theorem}{Theorem}{Theorems}
-\crefname{assumption}{Assumption}{Assumptions}
-
-%********************************************************************
-% Extra definitions
-%********************************************************************
-\usepackage{enumitem} % tight enumerates
-\usepackage[separate-uncertainty=true,multi-part-units=single]{siunitx} % better table control
-
-\newcommand{\maxf}[1]{{\cellcolor[gray]{0.8}} #1}
-\global\long\def\embedding{\lambda}
-
-% Peter's grey box
-\declaretheoremstyle[
-%    postheadspace=\newline,
-spacebelow=\parsep,
-    spaceabove=\parsep,
-  mdframed={
-    backgroundcolor=gray!10!white,     % vv: weird spacing issue, so leaving transpartent for now
-    hidealllines=true, 
-    innertopmargin=8pt, 
-    innerbottommargin=4pt, 
-    skipabove=8pt,
-    skipbelow=10pt,
-    nobreak=true
-}
-]{grayboxed}
-\declaretheorem[style=grayboxed,name=Assumption]{gassumption}
-% \declaretheorem[style=plain]{auxtheorem}
-% \declaretheorem[style=grayboxed,sibling=auxtheorem]{algorithm}
-% \declaretheorem[style=grayboxed,name=Algorithm]{nalgorithm}
-\crefname{gassumption}{Assumption}{Assumptions}
-
-\usepackage{thm-restate}
-
-%********************************************************************
-% Dan Roy's commenting code
-%********************************************************************
-\usepackage{xcolor}
-\input{preamble/commenting.tex}
-%\input{preamble/myvruler.tex}
-%For submission, uncomment these lines to make all annotations render as blank.
-% \renewcommand{\LATER}[1]{}
-% \renewcommand{\fLATER}[1]{}
-% \renewcommand{\TBD}[1]{}
-% \renewcommand{\fTBD}[1]{}
-% \renewcommand{\PROBLEM}[1]{}
-% \renewcommand{\fPROBLEM}[1]{}
-% \renewcommand{\NA}[1]{#1}  %% Note, NA's pass through!
-
-% frontmatter
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{microtype}
+\usepackage{parskip}
 \usepackage[affil-it]{authblk}
 
-\title{Paper Template for Writing with Victor}
+\title{Affective Factors Predict Selective Attention\\in Vision-Language Models}
 \date{}
-\author[1]{Albert Einstein}
-\author[1,2]{Pierre Laplace}
-\affil[1]{Physical Insitute of the Beyond}
-\affil[2]{Ouija Statistical Institute}
+\author[1]{Michael Zhu}
+\affil[1]{Department of Psychology}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Your abstract here
+When viewing a scene containing multiple objects, humans do not process all content equally---emotionally arousing stimuli tend to capture attention more readily than neutral ones. We ask whether vision-language models trained on large-scale human-generated image-text pairs have acquired a similar bias. We constructed composite stimuli by placing pairs of images from the OASIS affective image set side by side and measured how six CLIP models with ViT-based visual encoders allocated representational priority between the two constituents. We used two complementary metrics: within-constituent attention rollout and composite-constituent embedding similarity. Image-level linear regressions showed that human arousal ratings consistently predicted attentional priority across all models, both metrics, and three independent datasets, even after controlling for low-level visual features. Valence effects were weaker and less consistent. These results suggest that large-scale multimodal training may transmit not only semantic correspondences between images and language, but also human-like affective biases in visual selective attention.
 \end{abstract}
 
+% ---------------------------------------------------------------
 \section{Introduction}
+% ---------------------------------------------------------------
 
-This is a short document illustrating the hodgepodge of latex commands and style files that Victor uses to write papers.
-The main things are:
-\begin{enumerate}
-\item Use human-readable macros in latex math.
-  
-\begin{verbatim}
-Good: \EE[Y \given X]
-Bad: \mathbb{E}[Y | X]
-\end{verbatim}
-\item Use margin commenting commands (the included ones are due to Daniel M. Roy) to avoid breaking flow of the text w/ comments.
-\item Finished documents should be beautiful.
-\end{enumerate}
+The visual world presents far more information than can be fully processed at once. In humans, this problem is managed through selective attention: some stimuli receive prioritized processing while others are suppressed. A well-established finding in attention research is that emotional content, especially high-arousal stimuli, tends to capture attention more effectively than neutral content \citep{matherArousalBiasedCompetitionPerception2011, sutherlandArousalNotValence2018}. This phenomenon is often called arousal-biased competition: when stimuli compete for limited processing resources, higher arousal amplifies competitive advantage \citep{matherArousalBiasedCompetitionPerception2011}.
 
-The most common option for commenting is margin commenting.\fTBD{vv: like this}
-It's also sometimes useful to highly text that \NA{needs attention}.
-Severe issues can be \PROBLEM{flagged as problems}.
+Vision-language models (VLMs) such as CLIP are trained on hundreds of millions of human-generated image-text pairs \citep{radfordLearningTransferableVisual2021a}. The key property of this training signal is that image descriptions written by humans are not comprehensive or objective---they are selective. People tend to describe what they find most noteworthy, salient, or meaningful. If high-arousal content is more likely to be mentioned in captions, then a model trained to align images with their captions may learn not just semantic correspondences but also something resembling the selective attention patterns that produced the training data in the first place.
 
-\section{Further comments}
-When citing multiple references at once use only a single cite command \cite[e.g,][]{Richardson:Hudgens:Gilbert:Fine:2014, Liu:Kuramoto:Stuart:2013}.
-When using a citation as a noun, as in ``According to \citet{Rosenbaum:2010}, ...'', use \texttt{citet}.
+Recent work has shown that vision models trained purely on visual tasks can predict human affective responses to images, including valence, arousal, and beauty ratings \citep{conwellPerceptualPrimacyFeeling2025}. That work asks whether model representations correlate with affect. Our question is different: do affective properties of images influence what a model preferentially represents when multiple images compete? We ask this using a paradigm analogous to competitive attention tasks in human psychology, adapted for the CLIP image encoder.
 
-In many venues, its common for proofs of theorems to appear only in an appendix. Using the restatable package makes this much easier. For example:
-\begin{restatable}{theorem}{mooncracker}
-\label{thm:mooncracker}
-Assume that the moon is made of cheese. Then, the moon is tasty with crackers, for all crackers that are non-stale.
-\end{restatable}
+We present pairs of affectively rated images to CLIP and measure how the model allocates representational priority between the two constituents. We find that arousal consistently predicts which image receives higher priority, across model architectures, pretraining datasets, attentional metrics, and affective image datasets. Valence shows a weaker, less consistent positive effect. These findings suggest that affective attentional biases may be encoded in VLMs through their training data.
 
-The way I handle bibliographies is incompatible with natbib. Accordingly, when modifying this template to work with ML conference templates (e.g., NeurIPS or ICML), use their \texttt{nonatbib} option.
+% ---------------------------------------------------------------
+\section{Related Work}
+% ---------------------------------------------------------------
 
-\section{Writing Advice}
-We now transition from latex formatting to some free-form writing and style advice.
-My intention is to eventually significantly update this.
+\paragraph{Arousal-biased competition in human attention.}
+Human attention research has documented robust effects of emotional content on visual selective attention. Early work using the emotional Stroop and dot-probe paradigms showed that threat-related and negative stimuli capture attention preferentially \citep{macleodAttentionalBiasEmotional1986, prattoAutomaticVigilanceAttentiongrabbing1991}. More recent work has argued that this effect is better characterized by arousal than by valence: high-arousal stimuli, whether positive or negative, compete more effectively for attentional priority than low-arousal stimuli \citep{sutherlandArousalNotValence2018, matherArousalBiasedCompetitionPerception2011}.
 
-Writing is \emph{extremely important}. The impact of your paper is limited by the ability of your audience to understand it. Your typical reader will be a non-expert with limited attention. Work hard to make your paper accessible and beautiful! For your first papers, the writing may take about as long as the actual research. Neglecting writing quality is the most common failure mode I see among new researchers. 
-\begin{enumerate}
-  \item A good first step for writing is to sketch the full paper in bullet points. Make sure the story is totally clear to you. Explain your paper to a couple of friends to nail down the flow. A partial template for bullet point writing: \url{https://docs.google.com/document/d/1KORmM9VsxY29ssod77e0zfKVlBLSesmauSYD5UyfDo4/edit?usp=sharing}
-  \item Some useful links:
-    \begin{enumerate}
-    \item Writing advice from Don Knuth: \url{https://jmlr.csail.mit.edu/reviewing-papers/knuth_mathematical_writing.pdf}. I strongly recommend at least reading the first 10 pages.
-    \item This tool for identifying overly complex or hard-to-understand sentences: \url{https://hemingwayapp.com/}
-    \item This transfomer-based rewriting tool: \url{https://www.wordtune.com/}
-    \end{enumerate}
-  \item Start writing early! Anticipate needing several full revisions of the paper. These often include large changes. For instance, throwing away entire sections, or adding new experiments. It's easy to miss deadlines, or to end up submitting subpar versions of your paper.   
-\end{enumerate}
+\paragraph{Selective representation in VLMs.}
+VLMs do not represent all visual content equally. \citet{abbasiCLIPMicroscopeFineGrained2025} showed that CLIP's image encoder is biased toward larger objects, while the text encoder prioritizes objects mentioned first in a caption. These biases trace back to regularities in the training data. Our work extends this line of inquiry by asking whether content-level affective properties, not just presentation properties like size or position, shape representational priority.
 
+\paragraph{Vision models and affective responses.}
+\citet{conwellPerceptualPrimacyFeeling2025} showed that features from vision models trained on canonical computer vision tasks can linearly predict human arousal, valence, and beauty ratings, accounting for a majority of explainable variance. This demonstrates a correspondence between model representations and affective content. We build on this by asking whether affective properties predict not just the representational content of model features, but the relative priority assigned to competing inputs.
 
-%\newpage
-\printbibliography
+% ---------------------------------------------------------------
+\section{Methods}
+% ---------------------------------------------------------------
 
-\newpage
-\appendix
+\subsection{Models}
 
-% \title{Appendix}
-% \date{\vspace{-5ex}}
-% \maketitle
+We evaluated six CLIP models with ViT-based visual encoders from the OpenCLIP library \citep{cherti2023reproducible, ilharco_gabriel_openclip_repo}. These models vary along two dimensions: architectural scale (ViT-B/32, ViT-B/16, ViT-L/14) and pretraining dataset (LAION-2B \citep{schuhmann2022laion5bopenlargescaledataset} and DataComp-1B \citep{gadre2023datacompsearchgenerationmultimodal}), yielding a $3 \times 2$ design. We focused on the CLIP visual encoder throughout and excluded the text pathway, since our question concerns visual representational priority rather than language generation.
 
-\section{Proofs}
-Recall that \cref{thm:mooncracker} is provided to illustrate the use of restatable.
-\mooncracker* 
-\begin{proof}
-  This is straightforward from well-known results of Wallace and Gromit. \PROBLEM{missing citation}
-\end{proof}
+\subsection{Datasets}
+
+\paragraph{OASIS (primary dataset).}
+The Open Affective Standardized Image Set \citep{kurdiIntroducingOpenAffective2017} contains 900 color images spanning four semantic categories (people, animals, objects, scenes) and provides normative valence and arousal ratings collected from 822 MTurk participants, with approximately 100 ratings per image. Interrater reliability is high ($r_\text{valence} = .984$, $r_\text{arousal} = .929$). Each image has an associated concept label (e.g., ``Rollercoaster'', ``Cat''), which we use for concept-level visualization. OASIS images are near-square in aspect ratio, making them well-suited to patch-aligned composite construction.
+
+\paragraph{Supplementary datasets.}
+NAPS and EmoMadrid are additional affective image databases with normative valence and arousal ratings. They were used to test whether results from OASIS replicate across independent stimulus sets.
+
+\subsection{Stimuli Construction}
+
+In each trial, the model was presented with a composite image containing two constituent images placed side by side on a white square canvas. Each constituent image was resized to occupy exactly $5 \times 5$ ViT patches, with one patch of white padding inserted between them. This yields an $11 \times 11$ patch canvas ($5 + 1 + 5$ horizontally; $11$ vertically with both images vertically centered), ensuring that each constituent occupies an integer number of patches with no boundary ambiguity.
+
+We sampled 100,000 unique permutation pairs from the 900 OASIS images. Using permutation pairs (where image A on the left and image B on the right is treated as distinct from B on the left and A on the right) allows position effects to be estimated and averaged out across trials.
+
+\subsection{Attentional Priority Metrics}
+
+We measured representational priority using two complementary metrics.
+
+\paragraph{Within-constituent attention rollout.}
+Attention rollout \citep{attentionrollout_abnar2020} estimates how information flows from input patches to the final [CLS] representation by recursively multiplying attention matrices across transformer layers, incorporating residual connections at each step. Formally, for layer $l$ with attention matrix $A^{(l)}$, we compute
+\[
+\tilde{A}^{(l)} = \text{normalize}\!\left(A^{(l)} + I\right), \qquad R = \tilde{A}^{(L)} \tilde{A}^{(L-1)} \cdots \tilde{A}^{(1)}.
+\]
+The rollout priority of constituent $i$ is then the mean of the [CLS]-to-patch rollout values over the patches belonging to that constituent:
+\[
+s_i = \frac{1}{|M_i|} \sum_{p \in M_i} R_{\text{CLS},\, p},
+\]
+where $M_i$ is the patch mask for constituent $i$. Multi-head attention weights are aggregated by taking the maximum across heads. We apply a discard ratio of 0.7 to low-attention connections (while preserving those involving [CLS]) before computing rollout. Higher rollout priority indicates that a constituent contributed more to the composite representation.
+
+\paragraph{Composite-constituent embedding similarity.}
+We also measured how similar the composite image's final embedding is to each constituent's embedding. For each trial, we extracted the [CLS] embedding from the full composite image and from each constituent image presented alone in the same spatial position on the same canvas format (with the opposite side left blank). We then computed cosine similarity between the composite embedding and each constituent embedding. Higher similarity indicates that the composite representation is more strongly shaped by that constituent.
+
+\subsection{From Trial-level Scores to Image-level Priority}
+
+Within each trial, the two constituent scores (from either metric) are normalized to sum to 1, giving a relative priority $P_i = s_i / (s_i + s_j)$ for each constituent. Each image's overall attentional priority is the mean of its relative priority across all trials in which it appeared. Because each image appears in many different trial contexts (paired with many different opponents), this average is a stable, context-averaged measure of how the model tends to prioritize that image.
+
+\subsection{Regression Analysis}
+
+For each combination of dataset, model, and attentional metric, we fit an image-level ordinary least squares regression:
+\[
+\text{Priority}_i \sim \text{Arousal}_i + \text{Valence}_i + \text{Contrast}_i + \text{Entropy}_i + \text{Ldim}_i + \text{Adim}_i + \text{Bdim}_i.
+\]
+All predictors were standardized. The five visual control variables capture low-level image properties: contrast (standard deviation of grayscale pixel intensity), entropy (complexity of the grayscale intensity distribution), and three CIELAB color channels (Ldim: lightness; Adim: red-green; Bdim: yellow-blue). These controls ensure that any arousal or valence effects cannot be attributed solely to correlated visual properties. All $p$-values were Bonferroni-corrected across the full set of planned tests, defined by the combination of predictors, metrics, models, and datasets.
+
+% ---------------------------------------------------------------
+\section{Results}
+% ---------------------------------------------------------------
+
+\subsection{What Receives High Attentional Priority?}
+
+Before examining regression results, we first characterize which images receive high versus low attentional priority. Priority was computed by rank-normalizing image-level scores across metrics and models.
+
+Representative examples from different priority percentiles show a clear qualitative pattern. Low-priority images tend to depict static, low-stimulus content (e.g., pine cones, a leaf in snow, abstract space scenes), while high-priority images depict action, threat, or emotionally intense events (e.g., lightning with a helicopter, a bloody animal carcass, rafting in white water). The concept-level word cloud (Figure 1 in the talk slides), which averages priority within OASIS concept labels, makes this pattern especially clear: prominent high-priority concepts include Rollercoaster, Skydiving, Car crash, Dog attack, Boxing, Rafting, and Rugby---all high-arousal, action-laden categories. Low-priority concepts include passive or mundane items.
+
+\subsection{Arousal Predicts Attentional Priority}
+
+The central result is that human arousal ratings consistently predict image-level attentional priority across all six CLIP models and both metrics (Figure~\ref{fig:oasis_coefs}). Standardized regression coefficients for arousal range from approximately 0.10 to 0.35, and all survive Bonferroni correction ($p < .05$). This indicates that, after controlling for low-level visual properties, images rated as more emotionally arousing by humans tend to receive greater representational priority in CLIP's visual encoder.
+
+\begin{figure}[h]
+\centering
+% Placeholder reference to the coefficient plot from the slides/paper
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{1.5cm}
+[Figure: Standardized regression coefficients for all predictors across six CLIP models and two metrics (attention rollout and cosine similarity) for OASIS. Filled points indicate Bonferroni-corrected significance ($p < .05$); open circles indicate non-significant effects.]\vspace{1.5cm}}}
+\caption{Regression coefficients predicting image-level attentional priority for OASIS. Arousal shows a consistent positive effect across models and both metrics. Valence effects are positive but weaker and less consistent. Visual feature controls are included in all regressions.}
+\label{fig:oasis_coefs}
+\end{figure}
+
+Valence also shows a generally positive effect---more positively valenced images tend to receive slightly higher priority---but this effect is weaker and less consistent across models and metrics. For the cosine similarity metric in particular, valence reaches significance in only two of six models, compared to all six for arousal.
+
+\subsection{Visual Feature Effects}
+
+The visual control variables also show interpretable patterns. Higher contrast and higher entropy generally predict higher priority, consistent with the idea that visually complex or high-contrast images dominate in the composite. Adim and Bdim (color dimensions) show relatively consistent effects.
+
+Interestingly, the effect of Ldim (luminance) differs between metrics: it is negative for attention rollout but positive for cosine similarity. We attribute the positive effect in cosine similarity to the white canvas background: brighter constituent images may share more visual structure with the white background regions of the composite, inflating cosine similarity to the composite embedding. The negative effect in attention rollout, which measures internal information flow rather than final representation similarity, is not subject to this confound and may reflect genuine model sensitivity to dark or locally contrastive regions.
+
+\subsection{Cross-Dataset Robustness}
+
+We repeated the analysis using NAPS and EmoMadrid as independent stimulus sets. The key finding replicates across datasets: arousal consistently predicts higher attentional priority, and the effect survives Bonferroni correction for most model-metric combinations (Figure~\ref{fig:cross_dataset}). Valence effects are generally positive across datasets but remain weaker and more variable than arousal.
+
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{1.5cm}
+[Figure: Affective regression coefficients (arousal and valence only) across EmoMadrid, NAPS, and OASIS, for both attention rollout and cosine similarity. Visual feature coefficients are omitted for clarity.]\vspace{1.5cm}}}
+\caption{Cross-dataset replication. Arousal shows a positive association with attentional priority across all three datasets and both metrics. Valence effects are generally positive but less consistent.}
+\label{fig:cross_dataset}
+\end{figure}
+
+\subsection{Affective Landscape}
+
+To visualize the joint structure of arousal, valence, and attentional priority, Figure~\ref{fig:landscape} shows images positioned in the valence-arousal affective space, with color indicating attentional-priority percentile. Across all three datasets and both metrics, high-priority images cluster in the high-arousal region of the affective space. For some models, a secondary concentration of high priority appears in the high-arousal, positive-valence quadrant, consistent with the mild positive valence effect observed in regression.
+
+\begin{figure}[h]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering\vspace{1.5cm}
+[Figure: Hexbin affective landscape. Each cell represents a region of the valence (x-axis) $\times$ arousal (y-axis) space; color indicates mean attentional-priority percentile. High-priority content clusters in the high-arousal region. Results shown for EmoMadrid, NAPS, and OASIS, for both attention rollout and cosine similarity.]\vspace{1.5cm}}}
+\caption{Affective landscape of model attentional priority. High-arousal images consistently receive greater priority across datasets and metrics.}
+\label{fig:landscape}
+\end{figure}
+
+% ---------------------------------------------------------------
+\section{Discussion}
+% ---------------------------------------------------------------
+
+\subsection{Summary}
+
+CLIP visual encoders exhibit a systematic bias toward high-arousal images when processing composite scenes. This effect is robust across six model variants, two attentional metrics, and three affective image datasets, and persists after controlling for low-level visual features including contrast, entropy, and color. The pattern mirrors arousal-biased competition in human attention \citep{matherArousalBiasedCompetitionPerception2011, sutherlandArousalNotValence2018}: stimuli that humans find more emotionally activating are also prioritized by the model.
+
+\subsection{Why Arousal?}
+
+The most natural account of the arousal effect is that it reflects a selective description bias in the training data. If humans who write image captions are more likely to mention, and more likely to elaborate on, high-arousal content, then a model trained to align images with captions will learn to weight such content more heavily in its representations. CLIP does not need to ``know'' about arousal; it only needs to learn that certain image regions are more predictive of their paired text descriptions, and high-arousal content may be more consistently and specifically described.
+
+This account predicts that the arousal bias should be weaker or absent in models trained purely on visual tasks, without human-generated language supervision. Testing this prediction by comparing CLIP to self-supervised vision models (e.g., MAE or DINO) is an important direction for future work.
+
+\subsection{Why Positive Valence?}
+
+The positive valence effect is more surprising, since many studies in human attention have emphasized the priority of negative, threatening stimuli \citep{prattoAutomaticVigilanceAttentiongrabbing1991, macleodAttentionalBiasEmotional1986}. One possible explanation involves a difference between the mechanism that captures human attention in the moment and the content that humans choose to describe in writing. Negative high-arousal content (e.g., violence, injury) may attract rapid attentional capture but also prompt avoidance and reluctance to dwell or elaborate. Positive high-arousal content (e.g., sports, celebrations, adventure) may be more likely to generate detailed, specific captions that create strong image-text associations.
+
+A complementary explanation is training data curation. Internet-scale image-text datasets are typically filtered for explicit or disturbing content. If negative high-arousal images are systematically underrepresented or described more sparsely in such corpora, the model would learn weaker alignments for this material, reducing rather than enhancing their representational priority.
+
+\subsection{Contributions}
+
+This work makes two contributions. Theoretically, it connects a well-established psychological framework---arousal-biased competition---to the behavior of vision-language models, suggesting that affective psychology concepts may be useful for understanding and characterizing VLM selectivity. Methodologically, it introduces a controlled composite-stimulus paradigm for measuring attentional priority in ViT-based encoders, using two complementary measures that tap different levels of the visual encoding process.
+
+More broadly, the findings suggest that VLMs may inherit from their training data not only semantic knowledge about image content but also human-like preferences about what in a visual scene is worth attending to.
+
+\subsection{Limitations and Future Directions}
+
+Several limitations should be noted. First, composite stimuli with a white background may introduce a luminance confound, as suggested by the divergent Ldim effects across metrics. Future work could vary the background or adopt paradigms closer to naturalistic multi-object scenes.
+
+Second, the side-by-side composite design is ecologically artificial. In natural scenes, objects interact spatially and semantically in ways our stimuli do not capture. Extending attentional priority analysis to natural scenes---where affective ratings are available at the object level, not just the image level---would be an important next step.
+
+Third, our account of the arousal effect relies on an assumed link between human selective attention and selective description in image captions. Directly testing this link, by analyzing the content and length of captions associated with high- versus low-arousal images in LAION or similar corpora, would provide more direct mechanistic evidence.
+
+Finally, examining how these biases emerge over the course of model training---whether they appear early and strengthen with more data, or emerge gradually alongside semantic alignment---would illuminate when and how human attentional biases enter the model.
+
+% ---------------------------------------------------------------
+\section{Conclusion}
+% ---------------------------------------------------------------
+
+We find that CLIP visual encoders preferentially represent high-arousal images in multi-image competitive contexts, an effect that mirrors arousal-biased competition in human attention and that persists across model architectures, pretraining datasets, attentional metrics, and affective image datasets. Large-scale training on human-generated image-text pairs may thus transmit not only semantic structure but also affective attentional biases---reflecting not just what humans see, but what they choose to describe.
+
+% ---------------------------------------------------------------
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+% ---------------------------------------------------------------
+% Inline bibliography for standalone compilation
+% ---------------------------------------------------------------
+\begin{thebibliography}{99}
+
+\bibitem[Abbasi et al.(2025)]{abbasiCLIPMicroscopeFineGrained2025}
+Abbasi, R., Nazari, A., Sefid, A., Banayeeanzade, M., Rohban, M.~H., and Baghshah, M.~S. (2025).
+\newblock {CLIP Under the Microscope: A Fine-Grained Analysis of Multi-Object Representation}.
+\newblock \emph{arXiv:2502.19842}.
+
+\bibitem[Abnar and Zuidema(2020)]{attentionrollout_abnar2020}
+Abnar, S. and Zuidema, W. (2020).
+\newblock Quantifying attention flow in transformers.
+\newblock \emph{arXiv:2005.00928}.
+
+\bibitem[Cherti et al.(2023)]{cherti2023reproducible}
+Cherti, M., Beaumont, R., Wightman, R., Wortsman, M., Ilharco, G., Gordon, C., Schuhmann, C., Schmidt, L., and Jitsev, J. (2023).
+\newblock Reproducible scaling laws for contrastive language-image learning.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}, pages 2818--2829.
+
+\bibitem[Conwell et al.(2025)]{conwellPerceptualPrimacyFeeling2025}
+Conwell, C., Graham, D., Boccagno, C., and Vessel, E.~A. (2025).
+\newblock The perceptual primacy of feeling: Affectless visual machines explain a majority of variance in human visually evoked affect.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 122(4):e2306025121.
+
+\bibitem[Dosovitskiy et al.(2021)]{dosovitskiyImageWorth16x162021b}
+Dosovitskiy, A., Beyer, L., Kolesnikov, A., et al. (2021).
+\newblock An image is worth 16x16 words: Transformers for image recognition at scale.
+\newblock \emph{arXiv:2010.11929}.
+
+\bibitem[Gadre et al.(2023)]{gadre2023datacompsearchgenerationmultimodal}
+Gadre, S.~Y., Ilharco, G., Fang, A., et al. (2023).
+\newblock {DataComp}: In search of the next generation of multimodal datasets.
+\newblock \emph{arXiv:2304.14108}.
+
+\bibitem[Ilharco et al.(2021)]{ilharco_gabriel_openclip_repo}
+Ilharco, G., Wortsman, M., Wightman, R., et al. (2021).
+\newblock {OpenCLIP}.
+\newblock \url{https://doi.org/10.5281/zenodo.5143773}.
+
+\bibitem[Kurdi et al.(2017)]{kurdiIntroducingOpenAffective2017}
+Kurdi, B., Lozano, S., and Banaji, M.~R. (2017).
+\newblock Introducing the Open Affective Standardized Image Set ({OASIS}).
+\newblock \emph{Behavior Research Methods}, 49(2):457--470.
+
+\bibitem[MacLeod et al.(1986)]{macleodAttentionalBiasEmotional1986}
+MacLeod, C., Mathews, A., and Tata, P. (1986).
+\newblock Attentional bias in emotional disorders.
+\newblock \emph{Journal of Abnormal Psychology}, 95(1):15--20.
+
+\bibitem[Mather and Sutherland(2011)]{matherArousalBiasedCompetitionPerception2011}
+Mather, M. and Sutherland, M.~R. (2011).
+\newblock Arousal-biased competition in perception and memory.
+\newblock \emph{Perspectives on Psychological Science}, 6(2):114--133.
+
+\bibitem[Pratto and John(1991)]{prattoAutomaticVigilanceAttentiongrabbing1991}
+Pratto, F. and John, O.~P. (1991).
+\newblock Automatic vigilance: The attention-grabbing power of negative social information.
+\newblock \emph{Journal of Personality and Social Psychology}, 61(3):380--391.
+
+\bibitem[Radford et al.(2021)]{radfordLearningTransferableVisual2021a}
+Radford, A., Kim, J.~W., Hallacy, C., Ramesh, A., Goh, G., Agarwal, S., Sastry, G., Askell, A., Mishkin, P., Clark, J., Krueger, G., and Sutskever, I. (2021).
+\newblock Learning transferable visual models from natural language supervision.
+\newblock \emph{arXiv:2103.00020}.
+
+\bibitem[Russell(1980)]{russell2DArousalValence1980}
+Russell, J.~A. (1980).
+\newblock A circumplex model of affect.
+\newblock \emph{Journal of Personality and Social Psychology}, 39(6):1161--1178.
+
+\bibitem[Schuhmann et al.(2022)]{schuhmann2022laion5bopenlargescaledataset}
+Schuhmann, C., Beaumont, R., Vencu, R., Gordon, C., Wightman, R., Cherti, M., et al. (2022).
+\newblock {LAION-5B}: An open large-scale dataset for training next generation image-text models.
+\newblock \emph{arXiv:2210.08402}.
+
+\bibitem[Sutherland and Mather(2018)]{sutherlandArousalNotValence2018}
+Sutherland, M.~R. and Mather, M. (2018).
+\newblock Arousal (but not valence) amplifies the impact of salience.
+\newblock \emph{Cognition and Emotion}, 32(3):616--622.
+
+\end{thebibliography}
 
 \end{document}
-
