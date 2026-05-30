@@ -57,7 +57,7 @@ The visual world contains far more information than can be processed at once, so
 
 We propose that a similar affective attentional bias may be inherited by vision-language models through their training process. Models such as CLIP are trained on large-scale human-generated image--text pairs \citep{radfordLearningTransferableVisual2021a}. Image captions are usually not exhaustive records of visual scenes, but selective ones: people tend to describe what they find most salient and noteworthy. If high-arousal content is more likely to capture human attention and thus more likely to be mentioned in captions, contrastive image--text training may push models to assign such content higher attentional priority. 
 
-In the present study, we test this possibility by examining whether human affective ratings predict CLIP’s attentional priority across competing visual contents.
+In the present study, we test this possibility by examining whether human affective ratings predict CLIP’s attentional priority across competing visual content.
 %In this way, models may learn not only the semantic correspondences between images and text, but also the attentional biases embedded in human description behavior.
 
 %This hypothesis also connects to a broader question about the relation between model representations and human affect. Prior work has shown that visual model representations can predict human affective responses to images \citep{conwellPerceptualPrimacyFeeling2025}. However, this line of research is primarily about whether models encode affectively relevant information. Our question is different: when multiple images compete for representation, do the affective properties of those images influence which one the model prioritizes? We are therefore not asking whether models can represent emotional content, but whether emotion shapes a downstream consequence---that is, which content gets encoded more.
@@ -241,7 +241,7 @@ For embedding similarity, however, valence coefficients are close to zero and ar
   \caption{Standardized coefficients predicting image-level attentional priority for OASIS. 
   Each point shows the coefficient from one CLIP model. 
   Row panels correspond to the two attentional priority metrics. 
-  All $p$-values are Bonferroni-corrected across all planned tests. Filled circles indicate corrected $p < .05$; open circles indicate non-significant effects.}
+  All $p$-values are Bonferroni-corrected across all planned tests. Filled dots indicate corrected $p < .05$; open circles indicate non-significant effects.}
   \label{fig:oasis_coefs}
 \end{figure}
 
@@ -275,7 +275,7 @@ Full coefficient plots including visual features for EmoMadrid and NAPS are prov
   \centering
   \includegraphics[width=\textwidth]{plots/Fig5_coef_cross_dataset.pdf}
   \caption{Affective standardized coefficients across datasets and metrics.
-  Filled circles: Bonferroni-corrected $p < .05$; open circles: n.s.}
+  Filled dots: Bonferroni-corrected $p < .05$; open circles: n.s.}
   \label{fig:cross_dataset}
 \end{figure}
 
@@ -307,14 +307,14 @@ This work demonstrates that the attentional priority of vision-language models c
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.82\textwidth]{plots/S2_OASIS_example.pdf}
+  \includegraphics[width=0.82\textwidth]{plots/S1_OASIS_example.pdf}
   \caption{Representative images across the valence--arousal space for OASIS. Columns correspond to low, medium, and high valence; rows correspond to low, medium, and high arousal.}
   \label{fig:affective_space_examples}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\textwidth]{plots/S1_landscape.pdf}
+  \includegraphics[width=\textwidth]{plots/S2_raw_landscape.png}
   \caption{Valence--arousal distribution for each dataset. Each point
     represents one image positioned by its normalized valence ($x$-axis)
     and arousal ($y$-axis). The Pearson correlation between valence and
@@ -326,7 +326,7 @@ This work demonstrates that the attentional priority of vision-language models c
   \centering
   \includegraphics[width=\textwidth]{plots/S3-1_coef_EmoMadrid.pdf}
   \caption{Full regression coefficients for EmoMadrid, including all visual
-    feature controls. Filled circles: Bonferroni-corrected $p < .05$;
+    feature controls. Filled dots: Bonferroni-corrected $p < .05$;
     open circles: n.s.}
   \label{fig:coef_emomadrid}
 \end{figure}
@@ -335,7 +335,7 @@ This work demonstrates that the attentional priority of vision-language models c
   \centering
   \includegraphics[width=\textwidth]{plots/S3-2_coef_NAPS.pdf}
   \caption{Full regression coefficients for NAPS, including all visual
-    feature controls. Filled circles: Bonferroni-corrected $p < .05$;
+    feature controls. Filled dots: Bonferroni-corrected $p < .05$;
     open circles: n.s.}
   \label{fig:coef_naps}
 \end{figure}
